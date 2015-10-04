@@ -1,8 +1,7 @@
 package fr.univcorse.mlignereux.projetiot;
 
-import fr.univcorse.mlignereux.projetiot.Entity.CAthlete;
-import fr.univcorse.mlignereux.projetiot.Entity.CPerformance;
-import fr.univcorse.mlignereux.projetiot.Entity.CTraining;
+import fr.univcorse.mlignereux.projetiot.entity.CAthlete;
+import fr.univcorse.mlignereux.projetiot.entity.CTraining;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,15 +17,14 @@ public class App
         CAthlete athleteA = new CAthlete("A", "pwd");
         CAthlete athleteB = new CAthlete("B", "pwd");
 
-        List<CPerformance> performances = new ArrayList<CPerformance>();
-        performances.add(new CPerformance(2));
-        performances.add(new CPerformance(5));
-        List<CPerformance> performances2 = new ArrayList<CPerformance>();
-        performances2.add(new CPerformance(3));
-        performances2.add(new CPerformance(4));
-        athleteA.getTrainings().add(new CTraining(performances));
-        athleteA.getTrainings().add(new CTraining(performances2));
+        List<CTraining> trainings = new ArrayList<CTraining>();
 
-        System.out.println( athleteA );
+        trainings.add(new CTraining());
+        trainings.add(new CTraining());
+
+        athleteA.getTrainings().add(trainings.get(1));
+
+
+        System.out.println( trainings );
     }
 }
