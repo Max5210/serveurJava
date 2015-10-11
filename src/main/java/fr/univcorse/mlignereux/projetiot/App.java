@@ -2,7 +2,11 @@ package fr.univcorse.mlignereux.projetiot;
 
 import fr.univcorse.mlignereux.projetiot.entity.CAthlete;
 import fr.univcorse.mlignereux.projetiot.entity.CTraining;
+import fr.univcorse.mlignereux.projetiot.entity.CUser;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,19 +16,22 @@ import java.util.List;
  */
 public class App 
 {
+
+    private static EntityManager em;
     public static void main( String[] args )
     {
-        CAthlete athleteA = new CAthlete("A", "pwd");
-        CAthlete athleteB = new CAthlete("B", "pwd");
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("createUser");
+        em = emf.createEntityManager();
 
-        List<CTraining> trainings = new ArrayList<CTraining>();
-
-        trainings.add(new CTraining());
-        trainings.add(new CTraining());
-
-        athleteA.getTrainings().add(trainings.get(1));
+        createUser("p1","pwd", CUser.Status.ATHLETE);
 
 
-        System.out.println( trainings );
+    }
+
+    private static void createUser(String pseudo, String pwd, CUser.Status status){
+        em.getTransaction().begin();
+        CUser user = new CUser(pseudo,pwd, status);
+        em.persist(user);
+        em.getTransaction().commit();
     }
 }
