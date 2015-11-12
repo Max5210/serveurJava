@@ -5,17 +5,27 @@
              http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
 
-    <persistence-unit name="createUser">
-        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <persistence-unit name="connection" transaction-type="JTA">
+        <jta-data-source>java:/SmartLifeJacketDB</jta-data-source>
+
+        <class>fr.univcorse.mlignereux.projetiot.entity.CAthlete</class>
+        <class>fr.univcorse.mlignereux.projetiot.entity.CCoach</class>
+        <class>fr.univcorse.mlignereux.projetiot.entity.CCardiacFrequency</class>
+        <class>fr.univcorse.mlignereux.projetiot.entity.CChrono</class>
+        <class>fr.univcorse.mlignereux.projetiot.entity.CDistanceTraveled</class>
+        <class>fr.univcorse.mlignereux.projetiot.entity.CPerformance</class>
+        <class>fr.univcorse.mlignereux.projetiot.entity.CTraining</class>
+        <class>fr.univcorse.mlignereux.projetiot.entity.CVideo</class>
+
         <properties>
-            <property name="hibernate.connection.url" value="jdbc:mysql://localhost/test"/>
-            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-            <property name="hibernate.connection.username" value="root"/>
-            <property name="hibernate.connection.password" value=""/>
-            <property name="hibernate.archive.autodetection" value="class"/>
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.format_sql" value="true"/>
-            <property name="hbm2ddl.auto" value="update"/>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="javax.persistence.schema-generation.create-source" value="script"/>
+            <property name="javax.persistence.schema-generation.drop-source" value="script"/>
+            <property name="javax.persistence.schema-generation.create-script-source" value="META-INF/create.sql"/>
+            <property name="javax.persistence.schema-generation.drop-script-source" value="META-INF/drop.sql"/>
+            <property name="javax.persistence.sql-load-script-source" value="META-INF/load.sql"/>
+
+
         </properties>
     </persistence-unit>
 </persistence>

@@ -10,7 +10,6 @@ import java.util.Set;
  */
 public class CCrudServiceBean<T> implements ICrudServiceBean<T> {
 
-
     @PersistenceContext(name = "connection")
     EntityManager em = CDAO.getEntityManager();
 

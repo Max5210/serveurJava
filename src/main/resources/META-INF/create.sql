@@ -1,0 +1,1 @@
+CREATE TABLE athletes(id INT IDENTITY NOT NULL, pseudo VARCHAR(50), password VARCHAR(50), PRIMARY KEY (id))

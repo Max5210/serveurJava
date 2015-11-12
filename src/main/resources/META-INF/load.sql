@@ -1,0 +1,1 @@
+INSERT INTO athletes (PSEUDO, PASSWORD) VALUES ('maxime.lignereux@gmail.com', 'toto')
