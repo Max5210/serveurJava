@@ -36,24 +36,43 @@ public class CAthleteDAO {
     }
 
     public CAthlete find(Class type, int id){
+        CAthlete athlete = null;
         TypedQuery<CAthlete> query =  em.createQuery("select a from CAthlete a where a.id = :athlete_id",
                 type);
-        query.setParameter("athlete_id", id);
-        return query.getSingleResult();
+        if(query != null){
+            query.setParameter("athlete_id", id);
+            athlete = query.getSingleResult();
+        }
+        return athlete;
     }
 
+
     public CAthlete findByEmail(Class cAthleteClass, String email) {
-        TypedQuery<CAthlete> query =  em.createQuery("select a from CAthlete a where a.email = :athlete_email",
-                cAthleteClass);
-        query.setParameter("athlete_email", email);
-        return query.getSingleResult();
+        CAthlete athlete = null;
+        try{
+            TypedQuery<CAthlete> query = em.createQuery("select a from CAthlete a where a.email = :athlete_email",
+                    cAthleteClass);
+            query.setParameter("athlete_email", email);
+            athlete =  query.getSingleResult();
+        }catch(NoResultException exception){
+
+        }
+
+
+        return athlete;
     }
 
     public CAthlete getAthlete(String pEmail, String pPassword){
-        TypedQuery<CAthlete> query =  em.createQuery("select a from CAthlete a where a.email = :athlete_email and a.password =:athlete_password",
-                CAthlete.class);
-        query.setParameter("athlete_email", pEmail);
-        query.setParameter("athlete_password", pPassword);
-        return query.getSingleResult();
+        CAthlete athlete = null;
+        try{
+            TypedQuery<CAthlete> query =  em.createQuery("select a from CAthlete a where a.email = :athlete_email and a.password =:athlete_password",
+                    CAthlete.class);
+            query.setParameter("athlete_email", pEmail);
+            query.setParameter("athlete_password", pPassword);
+            athlete = query.getSingleResult();
+        }catch (NoResultException exception){
+
+        }
+        return athlete;
     }
 }

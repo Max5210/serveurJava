@@ -26,11 +26,12 @@ import java.util.List;
 @Path("/athletes")
 @Stateless
 @LocalBean
+@Consumes("*/*")
 public class CAthleteRessource {
 
     public static final String BAD_REQUEST = "Not enough data is provided in order to create the athlete";
     public static final String CONFLICT = "An account has already this id";
-    public static final String LOGIN_ALREADY_USED = "An athlete in database has already this login";
+    public static final String EMAIL_ALREADY_USED = "An athlete in database has already this email";
     public static final String BAD_PATTERN_LOGIN = "Login with a wrong pattern";
     public static final String BAD_STATUS = "This athlete has a wrong status";
     public static final String CREATED = "A new athlete has been created at the location you specified";
@@ -47,19 +48,26 @@ public class CAthleteRessource {
 
     @POST
     @Path("/add")
-    @Consumes("application/x-www-form-urlencoded")
-    @Produces("text/plain")
+    @Produces("application/json")
     public Response postAthlete(@FormParam(CAthlete.FIELD_EMAIL) String pEmail,
-                                @FormParam(CAthlete.FIELD_PASSWORD) String pPwd,
-                                @FormParam(CAthlete.FIELD_STATUS) CUser.Status status){
-        if(pEmail == null || pPwd == null || status == null){
+                                @FormParam(CAthlete.FIELD_PASSWORD) String pPwd){
+        System.out.println(pEmail);
+        System.out.println(pPwd);
+
+        if(pEmail == null || pPwd == null){
             return Response.status(Response.Status.BAD_REQUEST)//400 Bad request if not enough data is provided
                     .entity(BAD_REQUEST)
                     .build();
         }
 
+        if(athleteDAO.findByEmail(CAthlete.class, pEmail) != null){
+            return Response.status(Response.Status.FOUND)
+                    .entity(EMAIL_ALREADY_USED)
+                    .build();
+        }
+
         CAthlete athleteCreated = athleteDAO.create(pEmail,pPwd);
-        athleteCreated.setStatus(CUser.Status.ATHLETE);
+
         if (athleteCreated != null) {
             return Response.status(Response.Status.CREATED)// 201 created
                     .header("Location",
@@ -130,22 +138,30 @@ public class CAthleteRessource {
 
     @GET
     @Path("/connect")
-    @Consumes("application/x-www-form-urlencoded")
-    @Produces("text/plain")
-    public Response connectAthlete(@FormParam(CAthlete.FIELD_EMAIL) String pEmail,
-                                   @FormParam(CAthlete.FIELD_PASSWORD) String pPwd,
-                                   @FormParam(CAthlete.FIELD_STATUS) CUser.Status pStatus){
+    @Produces("application/json")
+    public Response connectAthlete(@QueryParam(CAthlete.FIELD_EMAIL) String pEmail,
+                                   @QueryParam(CAthlete.FIELD_PASSWORD) String pPwd,
+                                   @QueryParam(CAthlete.FIELD_STATUS) String pStatus){
+
+        System.out.println(pEmail);
+        System.out.println(pPwd);
+        System.out.println(pStatus);
+
         if(pEmail == null || pPwd == null || pStatus == null){
             return Response.status(Response.Status.BAD_REQUEST)//400 Bad request if not enough data is provided
                     .entity(BAD_REQUEST)
                     .build();
         }
 
-        if(pStatus != CUser.Status.ATHLETE)
-            return Response.status(Response.Status.NOT_ACCEPTABLE)
-                    .entity(BAD_STATUS)
+        if(athleteDAO.findByEmail(CAthlete.class, pEmail) == null){
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(NOT_FOUND)
                     .build();
+        }
+
         CAthlete athlete = athleteDAO.getAthlete(pEmail,pPwd);
+
+
         if(athlete != null){
             return Response.status(Response.Status.OK)
                     .header("Location",
@@ -153,7 +169,7 @@ public class CAthleteRessource {
                                     + String.valueOf(athlete.getId())).
                             type(MediaType.APPLICATION_JSON_TYPE).build();
         }
-        return Response.status(500).entity(Response.Status.UNAUTHORIZED).build();
+        return Response.status(401).entity(Response.Status.UNAUTHORIZED).build();
     }
 
 

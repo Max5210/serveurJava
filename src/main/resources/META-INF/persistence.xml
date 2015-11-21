@@ -5,7 +5,7 @@
              http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
 
-    <persistence-unit name="connection" transaction-type="JTA">
+    <persistence-unit name="connection">
         <jta-data-source>java:/SmartLifeJacketDB</jta-data-source>
 
         <class>fr.univcorse.mlignereux.projetiot.entity.CAthlete</class>
@@ -17,13 +17,11 @@
         <class>fr.univcorse.mlignereux.projetiot.entity.CTraining</class>
         <class>fr.univcorse.mlignereux.projetiot.entity.CVideo</class>
 
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
         <properties>
-            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
-            <property name="javax.persistence.schema-generation.create-source" value="script"/>
-            <property name="javax.persistence.schema-generation.drop-source" value="script"/>
-            <property name="javax.persistence.schema-generation.create-script-source" value="META-INF/create.sql"/>
-            <property name="javax.persistence.schema-generation.drop-script-source" value="META-INF/drop.sql"/>
-            <property name="javax.persistence.sql-load-script-source" value="META-INF/load.sql"/>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop" />
+            <property name="hibernate.show_sql" value="false" />
         </properties>
     </persistence-unit>
 </persistence>

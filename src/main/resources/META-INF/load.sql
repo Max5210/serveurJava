@@ -1,1 +1,1 @@
-INSERT INTO athletes (EMAIL, PASSWORD, STATUS) VALUES ('maxime.lignereux@gmail.com', 'toto', 'ATHLETE')
+INSERT INTO ATHLETES (EMAIL, PASSWORD, STATUS) VALUES ('maxime.lignereux@gmail.com', 'toto', 'ATHLETE')
