@@ -2,14 +2,12 @@ package fr.univcorse.mlignereux.projetiot.dao;
 
 import fr.univcorse.mlignereux.projetiot.entity.CAthlete;
 import fr.univcorse.mlignereux.projetiot.entity.CCoach;
+import fr.univcorse.mlignereux.projetiot.entity.CTraining;
 import fr.univcorse.mlignereux.projetiot.entity.CUser;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -27,19 +25,13 @@ public class CCoachDAO  {
         return query.getResultList();
     }
 
-    public CCoach findByEmail(String pEmail) {
-        try {
-            return em.createNamedQuery("getByEmail", CCoach.class).setParameter("email", pEmail).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
     public CCoach create(String pEmail, String pPassword){
         CCoach coach = new CCoach();
         coach.setEmail(pEmail);
         coach.setPassword(pPassword);
         coach.setStatus(CUser.Status.COACH);
+        coach.setAthletes(null);
+        coach.setTrainings(null);
         em.persist(coach);
         return coach;
     }
@@ -52,10 +44,52 @@ public class CCoachDAO  {
     }
 
     public CCoach findByEmail(Class cCoachClass, String email) {
-        TypedQuery<CCoach> query =  em.createQuery("select a from CCoach a where a.email = :coach_email",
-                cCoachClass);
-        query.setParameter("coach_email", email);
-        return query.getSingleResult();
+        CCoach coach = null;
+        try{
+            TypedQuery<CCoach> query =  em.createQuery("select a from CCoach a where a.email = :coach_email",
+                    cCoachClass);
+            query.setParameter("coach_email", email);
+            coach = query.getSingleResult();
+        }catch (NoResultException e){
+
+        }
+        return coach;
+    }
+
+    public CCoach getCoach(String pEmail, String pPassword){
+        CCoach coach = null;
+        try{
+            TypedQuery<CCoach> query =  em.createQuery("select a from CCoach a where a.email = :coach_email and a.password =:coach_password",
+                    CCoach.class);
+            query.setParameter("coach_email", pEmail);
+            query.setParameter("coach_password", pPassword);
+            coach = query.getSingleResult();
+        }catch (NoResultException exception){
+
+        }
+        return coach;
+    }
+
+    public void addAthlete(CCoach pCoach, CAthlete pAthlete){
+        find(CCoach.class, pCoach.getId()).getAthletes().add(pAthlete);
+        em.persist(pAthlete);
+    }
+
+    public List<CAthlete> getListAthletes(CCoach pCoach){
+        Query query =  em.createQuery("select c.athletes from CCoach c where c.id = :coach_id");
+        query.setParameter("coach_id", pCoach.getId());
+        return query.getResultList();
+    }
+
+    public List<CTraining> getListTrainings(CCoach pCoach){
+        Query query =  em.createQuery("select c.trainings from CCoach c where c.id = :coach_id");
+        query.setParameter("coach_id", pCoach.getId());
+        return query.getResultList();
+    }
+
+    public void addTraining(CCoach pCoach, CTraining pTraining){
+        find(CCoach.class, pCoach.getId()).getTrainings().add(pTraining);
+        em.persist(pTraining);
     }
 
 }

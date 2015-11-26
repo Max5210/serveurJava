@@ -1,29 +1,40 @@
 package fr.univcorse.mlignereux.projetiot.ressource;
 
+import fr.univcorse.mlignereux.projetiot.dao.CAthleteDAO;
 import fr.univcorse.mlignereux.projetiot.dao.CCoachDAO;
+import fr.univcorse.mlignereux.projetiot.dao.CTrainingDAO;
 import fr.univcorse.mlignereux.projetiot.entity.CAthlete;
 import fr.univcorse.mlignereux.projetiot.entity.CCoach;
+import fr.univcorse.mlignereux.projetiot.entity.CTraining;
 import fr.univcorse.mlignereux.projetiot.entity.CUser;
 
 import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by asus on 20/10/2015.
  */
 
-@Path("/coach")
+@Path("/coachs")
+@Stateless
+@LocalBean
+@Consumes("*/*")
 public class CCoachRessource {
 
     public static final String BAD_REQUEST = "Not enough data is provided in order to create the coach";
     public static final String CONFLICT = "An account has already this id";
-    public static final String LOGIN_ALREADY_USED = "An coach in database has already this login";
+    public static final String EMAIL_ALREADY_USED = "An coach in database has already this email";
     public static final String BAD_PATTERN_LOGIN = "Login with a wrong pattern";
     public static final String CREATED = "A new coach has been created at the location you specified";
     public static final String DEFAULT_RESPONSE = "This should not be happened";
@@ -37,15 +48,28 @@ public class CCoachRessource {
     @EJB
     private CCoachDAO coachDao;
 
+    @Inject
+    @EJB
+    private CAthleteDAO athleteDAO;
+
+    @Inject
+    @EJB
+    private CTrainingDAO trainingDAO;
+
     @POST
     @Path("/add")
-    @Consumes("application/x-www-form-urlencoded")
     @Produces("text/plain")
     public Response postCoach(@FormParam(CCoach.FIELD_EMAIL) String pEmail,
                                 @FormParam(CCoach.FIELD_PASSWORD) String pPwd){
         if(pEmail == null || pPwd == null){
             return Response.status(Response.Status.BAD_REQUEST)//400 Bad request if not enough data is provided
                     .entity(BAD_REQUEST)
+                    .build();
+        }
+
+        if(coachDao.findByEmail(CCoach.class, pEmail) != null){
+            return Response.status(Response.Status.FOUND)
+                    .entity(EMAIL_ALREADY_USED)
                     .build();
         }
 
@@ -65,15 +89,12 @@ public class CCoachRessource {
     @Path("/all")
     @GET
     @Produces("application/json")
-    public JsonArray getAllAthletes(){
-        JsonArrayBuilder builder = Json.createArrayBuilder();
+    public List<CCoach> getAllCoachs(){
+        List<CCoach> coaches = new ArrayList<CCoach>();
         for(CCoach coach : coachDao.getAllCoachs()){
-            builder.add(Json.createObjectBuilder()
-                    .add("id", coach.getId())
-                    .add("email", coach.getEmail())
-                    .add("password", coach.getPassword()));
+            coaches.add(coach);
         }
-        return builder.build();
+        return coaches;
     }
 
     @GET
@@ -109,9 +130,73 @@ public class CCoachRessource {
     @GET
     @Path("/connect")
     @Produces("application/json")
-    public JsonArray connectCoach(@FormParam(CCoach.FIELD_EMAIL) String pEmail,
-                              @FormParam(CCoach.FIELD_PASSWORD) String pPwd){
-        return null;
+    public Response connectCoach(@QueryParam(CCoach.FIELD_EMAIL) String pEmail,
+                                   @QueryParam(CCoach.FIELD_PASSWORD) String pPwd,
+                                   @QueryParam(CCoach.FIELD_STATUS) String pStatus){
 
+        System.out.println(pEmail);
+        System.out.println(pPwd);
+        System.out.println(pStatus);
+
+        if(pEmail == null || pPwd == null || pStatus == null){
+            return Response.status(Response.Status.BAD_REQUEST)//400 Bad request if not enough data is provided
+                    .entity(BAD_REQUEST)
+                    .build();
+        }
+
+        if(coachDao.findByEmail(CCoach.class, pEmail) == null){
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(NOT_FOUND)
+                    .build();
+        }
+
+        CCoach coach = coachDao.getCoach(pEmail,pPwd);
+
+
+        if(coach != null){
+            return Response.status(Response.Status.OK)
+                    .header("Location",
+                            "/athletes/"
+                                    + String.valueOf(coach.getId())).
+                            type(MediaType.APPLICATION_JSON_TYPE).build();
+        }
+        return Response.status(401).entity(Response.Status.UNAUTHORIZED).build();
     }
+
+    @PUT
+    @Path("/addAthlete/{id}/{email}")
+    @Produces("application/json")
+    public Response addAthlete(@PathParam("id")int pId, @PathParam("email")String pEmail){
+
+        CCoach coach = coachDao.find(CCoach.class, pId);
+
+        CAthlete athlete = athleteDAO.findByEmail(CAthlete.class, pEmail);
+        if(athlete == null){
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(NOT_FOUND)
+                    .build();
+        }
+        coachDao.addAthlete(coach, athlete);
+
+        return Response.status(201).entity(Response.Status.OK).build();
+    }
+
+    @GET
+    @Path("/allAthletes/{id}")
+    @Produces("application/json")
+    public List<CAthlete> getListAthletes(@PathParam("id") int pId){
+        return coachDao.find(CCoach.class, pId).getAthletes();
+    }
+
+    @POST
+    @Path("{id}/addTraining")
+    @Produces("application/json")
+    public Response addTraining(@PathParam("id")int pId){
+        CCoach coach = coachDao.find(CCoach.class, pId);
+        if(coach != null){
+            coachDao.addTraining(coach,trainingDAO.postTraining(coach));
+        }
+        return Response.status(201).entity(Response.Status.OK).build();
+    }
+
 }

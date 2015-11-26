@@ -2,6 +2,7 @@ package fr.univcorse.mlignereux.projetiot.ressource;
 
 import fr.univcorse.mlignereux.projetiot.dao.CAthleteDAO;
 import fr.univcorse.mlignereux.projetiot.entity.CAthlete;
+import fr.univcorse.mlignereux.projetiot.entity.CPerformance;
 import fr.univcorse.mlignereux.projetiot.entity.CUser;
 import sun.rmi.runtime.Log;
 
@@ -51,8 +52,6 @@ public class CAthleteRessource {
     @Produces("application/json")
     public Response postAthlete(@FormParam(CAthlete.FIELD_EMAIL) String pEmail,
                                 @FormParam(CAthlete.FIELD_PASSWORD) String pPwd){
-        System.out.println(pEmail);
-        System.out.println(pPwd);
 
         if(pEmail == null || pPwd == null){
             return Response.status(Response.Status.BAD_REQUEST)//400 Bad request if not enough data is provided
@@ -82,27 +81,9 @@ public class CAthleteRessource {
     @GET
     @Produces("application/json")
     public List<CAthlete> getAllAthletes(){
-        List<CAthlete> athletes = new ArrayList<CAthlete>(athleteDAO.getAllAthletes());
-        for(CAthlete athlete : athleteDAO.getAllAthletes()){
-            athletes.add(athlete);
-        }
-        return athletes;
+        return athleteDAO.getAllAthletes();
     }
 
-
-    /*@Path("/all")
-    @GET
-    @Produces("application/json")
-    public JsonArray getAllAthletes(){
-        JsonArrayBuilder builder = Json.createArrayBuilder();
-        for(CAthlete athlete : athleteDAO.getAllAthletes()){
-            builder.add(Json.createObjectBuilder()
-                    .add("id", athlete.getId())
-                    .add("email", athlete.getEmail())
-                    .add("password", athlete.getPassword()));
-        }
-        return builder.build();
-    }*/
 
     @GET
     @Path("{id}")
@@ -171,6 +152,16 @@ public class CAthleteRessource {
         }
         return Response.status(401).entity(Response.Status.UNAUTHORIZED).build();
     }
+
+
+    @GET
+    @Path("{id}/allPerformances")
+    @Produces("application/json")
+    public List<CPerformance> getAllPerformances(@PathParam("id") int pId){
+        CAthlete athlete = athleteDAO.find(CAthlete.class, pId);
+        return athlete.getPerformances();
+    }
+
 
 
 }
