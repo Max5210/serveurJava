@@ -2,11 +2,14 @@ package fr.univcorse.mlignereux.projetiot.entity;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Created by asus on 29/09/2015.
  */
 @Entity
+@Table(name="DISTANCESTRAVELED")
+@XmlRootElement(name = "DistanceTraveled")
 public class CDistanceTraveled {
 
     public static final String FIELD_ID = "id";
@@ -18,7 +21,7 @@ public class CDistanceTraveled {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @XmlElement(name = FIELD_PERFORMANCE)
     private CPerformance performance;
 

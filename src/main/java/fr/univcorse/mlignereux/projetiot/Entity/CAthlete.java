@@ -1,6 +1,11 @@
 package fr.univcorse.mlignereux.projetiot.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import javax.ws.rs.ext.ParamConverter;
 import javax.xml.bind.annotation.XmlElement;
@@ -14,6 +19,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "ATHLETES")
+@Inheritance(strategy = InheritanceType.JOINED)
 @XmlRootElement(name = "Athlete")
 public class CAthlete extends CUser implements Serializable {
 

@@ -2,11 +2,14 @@ package fr.univcorse.mlignereux.projetiot.entity;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Created by asus on 29/09/2015.
  */
 @Entity
+@Table(name = "VIDEOS")
+@XmlRootElement(name="Video")
 public class CVideo {
 
     public static final String FIELD_ID = "id";

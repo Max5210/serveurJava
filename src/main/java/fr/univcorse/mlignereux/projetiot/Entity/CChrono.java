@@ -2,12 +2,15 @@ package fr.univcorse.mlignereux.projetiot.entity;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Created by asus on 29/09/2015.
  */
 
 @Entity
+@Table (name= "CHRONOS")
+@XmlRootElement(name=  "Chrono")
 public class CChrono {
 
     public static final String FIEL_ID = "id";
@@ -44,7 +47,7 @@ public class CChrono {
     @Column(nullable = false)
     private int penality;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @XmlElement(name = FIELD_PERFORMANCE)
     private CPerformance performance;
 

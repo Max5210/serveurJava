@@ -1,6 +1,9 @@
 package fr.univcorse.mlignereux.projetiot.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -16,12 +19,14 @@ import java.util.List;
 @Entity
 @XmlRootElement(name = "Training")
 @Table(name = "TRAININGS")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class CTraining implements Serializable{
 
     public static final String FIELD_ID = "id";
     public static final String FIELD_DATE = "date";
     public static final String FIELD_ATHLETES = "athletes";
     public static final String FIELD_COACH = "coach";
+    public static final String FIELD_DESCRIPTION = "description";
 
     @Id
     @XmlElement(name = FIELD_ID)
@@ -32,7 +37,7 @@ public class CTraining implements Serializable{
     @XmlElement(name = FIELD_ATHLETES)
     private List<CAthlete> athletes;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @XmlElement(name = FIELD_COACH)
     private CCoach coach;
 
@@ -41,7 +46,20 @@ public class CTraining implements Serializable{
     @Temporal(TemporalType.DATE)
     private Date date;
 
+    @XmlElement(name = FIELD_DESCRIPTION)
+    @Column
+    private String description;
+
     public CTraining(){}
+
+    public CTraining(CCoach pCoach){
+        this.coach = pCoach;
+    }
+
+    public CTraining(CCoach pCoach, List<CAthlete> pAthletes){
+        this.coach = pCoach;
+        this.athletes = pAthletes;
+    }
 
     public int getId() {
         return id;
@@ -84,5 +102,13 @@ public class CTraining implements Serializable{
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

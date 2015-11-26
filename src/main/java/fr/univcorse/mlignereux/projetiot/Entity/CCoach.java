@@ -1,5 +1,7 @@
 package fr.univcorse.mlignereux.projetiot.entity;
 
+import com.fasterxml.jackson.annotation.*;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -11,7 +13,7 @@ import java.util.List;
  * Created by asus on 29/09/2015.
  */
 @Entity
-@XmlRootElement(name = "Coachs")
+@XmlRootElement(name = "Coach")
 @Table(name = "COACHS")
 public class CCoach extends CUser implements Serializable {
 
@@ -40,11 +42,11 @@ public class CCoach extends CUser implements Serializable {
     @Column
     private Status status;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @XmlElement(name = FIELD_ATHLETES)
     private List<CAthlete> athletes = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "coach")
     @XmlElement(name = FIELD_TRAININGS)
     private List<CTraining> trainings = new ArrayList<>();
 
@@ -119,4 +121,6 @@ public class CCoach extends CUser implements Serializable {
                 ", status=" + status +
                 '}';
     }
+
+
 }

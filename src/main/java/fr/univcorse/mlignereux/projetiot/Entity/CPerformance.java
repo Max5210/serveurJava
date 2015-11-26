@@ -1,6 +1,9 @@
 package fr.univcorse.mlignereux.projetiot.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 
@@ -8,6 +11,8 @@ import javax.xml.bind.annotation.*;
  * Created by asus on 29/09/2015.
  */
 @Entity
+@Table(name="PERFORMANCES")
+@XmlRootElement(name = "Performance")
 public class CPerformance {
 
     public static final String FIELD_ID = "id";
@@ -24,33 +29,42 @@ public class CPerformance {
     private int id;
 
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @XmlElement(name = FIELD_TRAINING)
-    CTraining training;
+    private CTraining training;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @XmlElement(name = FIELD_ATHLETE)
-    CAthlete athlete;
+    private CAthlete athlete;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @XmlElement(name = FIELD_CHRONO)
-    CChrono chrono;
+    private CChrono chrono;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @XmlElement(name = FIELD_CARDIACFREQUENCY)
-    CCardiacFrequency cardiacFrequency;
+    private CCardiacFrequency cardiacFrequency;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @XmlElement(name = FIELD_DISTANCETRAVELED)
-    CDistanceTraveled distanceTraveled;
+    private CDistanceTraveled distanceTraveled;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @XmlElement(name = FIELD_VIDEO)
-    CVideo video;
+    private CVideo video;
 
     int test;
 
     public CPerformance(){}
+
+    public CPerformance(CAthlete pAthlete, CTraining pTraining){
+        this.athlete = pAthlete;
+        this.training = pTraining;
+    }
+
+    public int getId() {
+        return id;
+    }
 
     public CTraining getTraining() {
         return training;
@@ -78,6 +92,34 @@ public class CPerformance {
 
     public CVideo getVideo() {
         return video;
+    }
+
+    public void setTraining(CTraining training) {
+        this.training = training;
+    }
+
+    public void setAthlete(CAthlete athlete) {
+        this.athlete = athlete;
+    }
+
+    public void setChrono(CChrono chrono) {
+        this.chrono = chrono;
+    }
+
+    public void setCardiacFrequency(CCardiacFrequency cardiacFrequency) {
+        this.cardiacFrequency = cardiacFrequency;
+    }
+
+    public void setDistanceTraveled(CDistanceTraveled distanceTraveled) {
+        this.distanceTraveled = distanceTraveled;
+    }
+
+    public void setVideo(CVideo video) {
+        this.video = video;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
