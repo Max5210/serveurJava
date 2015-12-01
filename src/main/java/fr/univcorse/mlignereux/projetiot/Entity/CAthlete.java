@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.*;
 import javax.ws.rs.ext.ParamConverter;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,8 +20,8 @@ import java.util.List;
  */
 @Entity
 @Table(name = "ATHLETES")
-@Inheritance(strategy = InheritanceType.JOINED)
 @XmlRootElement(name = "Athlete")
+@JsonIgnoreProperties(value = {CAthlete.FIELD_COACHS, CAthlete.FIELD_TRAININGS})
 public class CAthlete extends CUser implements Serializable {
 
     public static final String FIELD_ID = "id";
@@ -51,14 +52,17 @@ public class CAthlete extends CUser implements Serializable {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "athletes")
     @XmlElement(name = FIELD_TRAININGS)
+    @Column
     private List<CTraining> trainings = new ArrayList<CTraining>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "athletes")
     @XmlElement(name = FIELD_COACHS)
+    @Column
     private List<CCoach> coachs = new ArrayList<CCoach>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "athlete")
     @XmlElement(name = FIELD_PERFORMANCE)
+    @Column
     private List<CPerformance> performances = new ArrayList<CPerformance>();
 
     public CAthlete(){}

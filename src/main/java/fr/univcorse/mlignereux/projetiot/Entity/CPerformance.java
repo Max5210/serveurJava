@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.*;
 @Entity
 @Table(name="PERFORMANCES")
 @XmlRootElement(name = "Performance")
+@JsonIgnoreProperties(value = {CPerformance.FIELD_ATHLETE, CPerformance.FIELD_TRAINING})
 public class CPerformance {
 
     public static final String FIELD_ID = "id";
@@ -26,6 +27,7 @@ public class CPerformance {
     @Id
     @XmlElement(name = FIELD_ID)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private int id;
 
 

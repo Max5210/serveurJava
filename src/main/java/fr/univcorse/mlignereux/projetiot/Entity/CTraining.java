@@ -19,11 +19,11 @@ import java.util.List;
 @Entity
 @XmlRootElement(name = "Training")
 @Table(name = "TRAININGS")
-@Inheritance(strategy = InheritanceType.JOINED)
 public class CTraining implements Serializable{
 
     public static final String FIELD_ID = "id";
     public static final String FIELD_DATE = "date";
+    public static final String FIELD_HOUR = "hour";
     public static final String FIELD_ATHLETES = "athletes";
     public static final String FIELD_COACH = "coach";
     public static final String FIELD_DESCRIPTION = "description";
@@ -43,12 +43,15 @@ public class CTraining implements Serializable{
 
     @XmlElement(name = FIELD_DATE)
     @Column
-    @Temporal(TemporalType.DATE)
-    private Date date;
+    private String date;
 
     @XmlElement(name = FIELD_DESCRIPTION)
     @Column
     private String description;
+
+    @XmlElement(name = FIELD_HOUR)
+    @Column
+    private String hour;
 
     public CTraining(){}
 
@@ -71,7 +74,6 @@ public class CTraining implements Serializable{
 
 
     public void addPerformance(CPerformance performance) {
-        //this.performances.add(performance);
     }
 
     public void addAthlete(CAthlete pAthlete)
@@ -96,11 +98,11 @@ public class CTraining implements Serializable{
         this.coach = coach;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -110,5 +112,13 @@ public class CTraining implements Serializable{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getHour() {
+        return hour;
+    }
+
+    public void setHour(String hour) {
+        this.hour = hour;
     }
 }

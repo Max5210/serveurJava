@@ -1,5 +1,6 @@
 package fr.univcorse.mlignereux.projetiot.dao;
 
+import fr.univcorse.mlignereux.projetiot.entity.CAthlete;
 import fr.univcorse.mlignereux.projetiot.entity.CCoach;
 import fr.univcorse.mlignereux.projetiot.entity.CTraining;
 import org.omg.CORBA.CTX_RESTRICT_SCOPE;
@@ -41,10 +42,13 @@ public class CTrainingDAO {
         return query.getSingleResult();
     }
 
-    public CTraining postTraining(CCoach pCoach){
-        CTraining training = new CTraining(pCoach);
+    public CTraining postTraining(CCoach pCoach, String pDescription, String pDate, String pHour){
+        CTraining training = new CTraining();
+        training.setCoach(pCoach);
+        training.setDate(pDate);
+        training.setDescription(pDescription);
+        training.setHour(pHour);
         training.setAthletes(null);
-        training.setDescription(null);
         em.persist(training);
         return training;
     }

@@ -89,4 +89,28 @@ public class CChrono {
     public CPerformance getPerformance() {
         return performance;
     }
+
+    public void setHour(int hour) {
+        this.hour = hour;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
+    }
+
+    public void setSecond(int second) {
+        this.second = second;
+    }
+
+    public void setMillisecond(long millisecond) {
+        this.millisecond = millisecond;
+    }
+
+    public void setPenality(int penality) {
+        this.penality = penality;
+    }
+
+    public void setPerformance(CPerformance performance) {
+        this.performance = performance;
+    }
 }

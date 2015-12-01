@@ -77,7 +77,7 @@ public class CCoachRessource {
         if (coach != null) {
             return Response.status(Response.Status.CREATED)// 201 created
                     .header("Location",
-                            "/athletes/"
+                            "/coachs/"
                                     + String.valueOf(coach.getId())).
                             type(MediaType.APPLICATION_JSON_TYPE).build();
         }
@@ -98,18 +98,20 @@ public class CCoachRessource {
     }
 
     @GET
-    @Path("{id}")
+    @Path("/{id}")
     @Produces("application/json")
-    public JsonArray getCoachById(@PathParam("id") final int id){
+    public Response getCoachById(@PathParam("id") final int id){
         JsonArrayBuilder builder = Json.createArrayBuilder();
-        CCoach coach = coachDao.find(CCoach.class, id);
+        CCoach coach =  coachDao.find(CCoach.class, id);
         if(coach != null){
-            builder.add(Json.createObjectBuilder()
-                    .add("id", coach.getId())
-                    .add("email", coach.getEmail())
-                    .add("password", coach.getPassword()));
+            return Response.status(Response.Status.OK)
+                    .header("Location",
+                            "/coachs/"
+                                    + String.valueOf(coach.getId())).
+                            type(MediaType.APPLICATION_JSON_TYPE)
+                    .entity(coach).build();
         }
-        return builder.build();
+        return Response.status(Response.Status.NOT_FOUND).entity(NOT_FOUND).build();
     }
 
     @GET
@@ -152,19 +154,21 @@ public class CCoachRessource {
 
         CCoach coach = coachDao.getCoach(pEmail,pPwd);
 
+        System.out.println("Coach get:" + coach);
 
         if(coach != null){
             return Response.status(Response.Status.OK)
                     .header("Location",
-                            "/athletes/"
+                            "/coachs/"
                                     + String.valueOf(coach.getId())).
-                            type(MediaType.APPLICATION_JSON_TYPE).build();
+                            type(MediaType.APPLICATION_JSON_TYPE)
+                    .entity(coach).build();
         }
         return Response.status(401).entity(Response.Status.UNAUTHORIZED).build();
     }
 
     @PUT
-    @Path("/addAthlete/{id}/{email}")
+    @Path("/{id}/addAthlete/{email}")
     @Produces("application/json")
     public Response addAthlete(@PathParam("id")int pId, @PathParam("email")String pEmail){
 
@@ -182,21 +186,19 @@ public class CCoachRessource {
     }
 
     @GET
-    @Path("/allAthletes/{id}")
+    @Path("/{id}/allAthletes")
     @Produces("application/json")
-    public List<CAthlete> getListAthletes(@PathParam("id") int pId){
-        return coachDao.find(CCoach.class, pId).getAthletes();
-    }
-
-    @POST
-    @Path("{id}/addTraining")
-    @Produces("application/json")
-    public Response addTraining(@PathParam("id")int pId){
+    public JsonArray getListAthletes(@PathParam("id") int pId){
+        JsonArrayBuilder builder = Json.createArrayBuilder();
         CCoach coach = coachDao.find(CCoach.class, pId);
         if(coach != null){
-            coachDao.addTraining(coach,trainingDAO.postTraining(coach));
+            for (int i = 0; i < coach.getAthletes().size(); i++) {
+                builder.add(Json.createObjectBuilder()
+                        .add("id", coach.getAthletes().get(i).getId())
+                        .add("email", coach.getAthletes().get(i).getEmail()));
+            }
         }
-        return Response.status(201).entity(Response.Status.OK).build();
+        return builder.build();
     }
 
 }

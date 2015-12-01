@@ -1,8 +1,6 @@
 package fr.univcorse.mlignereux.projetiot.dao;
 
-import fr.univcorse.mlignereux.projetiot.entity.CAthlete;
-import fr.univcorse.mlignereux.projetiot.entity.CPerformance;
-import fr.univcorse.mlignereux.projetiot.entity.CTraining;
+import fr.univcorse.mlignereux.projetiot.entity.*;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -35,17 +33,23 @@ public class CPerformanceDAO{
 
     public void createPerformance(CAthlete pAthlete, CTraining pTraining){
         CPerformance performance = new CPerformance(pAthlete, pTraining);
-        performance.setChrono(null);
+       /* performance.setChrono(null);
         performance.setCardiacFrequency(null);
         performance.setDistanceTraveled(null);
-        performance.setVideo(null);
+        performance.setVideo(null);*/
         em.persist(performance);
     }
 
-    public CPerformance find(Class<CPerformance> cPerformanceClass, int pPerformanceId, CAthlete athlete) {
-        TypedQuery<CPerformance> query = em.createQuery("select p from CPerformance p where p.id = :performance_id and p.athlete = :athlete", cPerformanceClass);
+    public CPerformance find(Class<CPerformance> cPerformanceClass, int pPerformanceId) {
+        TypedQuery<CPerformance> query = em.createQuery("select p from CPerformance p where p.id = :performance_id", cPerformanceClass);
+        //TypedQuery<CPerformance> query = em.createQuery("select p from CPerformance p where p.id = :performance_id and p.athlete = :athlete", cPerformanceClass);
         query.setParameter("performance_id", pPerformanceId);
-        query.setParameter("athlete", athlete);
+        //query.setParameter("athlete", athlete);
         return query.getSingleResult();
+    }
+
+    public void addCardiacFrequency(CPerformance performance, CCardiacFrequency cardiacFrequency){
+        find(CPerformance.class, performance.getId()).setCardiacFrequency(cardiacFrequency);
+        em.persist(cardiacFrequency);
     }
 }

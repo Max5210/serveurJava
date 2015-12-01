@@ -15,6 +15,8 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
@@ -60,6 +62,28 @@ public class CTrainingRessource {
        return trainingDAO.getAllTrainings();
     }
 
+    @POST
+    @Path("/add")
+    @Produces("application/json")
+    public Response addTraining(@FormParam(CTraining.FIELD_COACH) int pCoach,
+                                @FormParam(CTraining.FIELD_DATE) String pDate,
+                                @FormParam(CTraining.FIELD_HOUR) String pHour,
+                                @FormParam(CTraining.FIELD_DESCRIPTION) String pDescription){
+
+        CCoach coach = coachDAO.find(CCoach.class, pCoach);
+
+        CTraining training = trainingDAO.postTraining(coach,pDescription,pDate,pHour);
+
+        if(training != null) {
+            return Response.status(Response.Status.CREATED)// 201 created
+                    .header("Location",
+                            "/trainings/"
+                                    + String.valueOf(training.getId())).
+                            type(MediaType.APPLICATION_JSON_TYPE).build();
+        }
+        return Response.status(500).entity(Response.Status.BAD_REQUEST).build();
+    }
+
     @PUT
     @Path("{id}/addAthletes/{id_athlete}")
     @Produces("application/json")
@@ -72,9 +96,24 @@ public class CTrainingRessource {
 
         athleteList.add(athlete);
 
-
-
-
     }
+
+    @GET
+    @Path("/{id}")
+    @Produces("application/json")
+    public Response getTrainingById(@PathParam("id") final int id){
+        JsonArrayBuilder builder = Json.createArrayBuilder();
+        CTraining training =  trainingDAO.find(CTraining.class, id);
+        if(training != null){
+            return Response.status(Response.Status.OK)
+                    .header("Location",
+                            "/trainings/"
+                                    + String.valueOf(training.getId())).
+                            type(MediaType.APPLICATION_JSON_TYPE)
+                    .entity(training).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).entity(NOT_FOUND).build();
+    }
+
 
 }

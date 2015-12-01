@@ -1,5 +1,7 @@
 package fr.univcorse.mlignereux.projetiot.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -10,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "CARDIACFREQUENCIES")
 @XmlRootElement(name = "CardiacFrequency")
+@JsonIgnoreProperties(value = {CCardiacFrequency.FIELD_PERFORMANCE})
 public class CCardiacFrequency {
 
     public static final String FIELD_ID = "id";
@@ -21,6 +24,7 @@ public class CCardiacFrequency {
     @Id
     @XmlElement(name = FIELD_ID)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private int id;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
@@ -28,12 +32,15 @@ public class CCardiacFrequency {
     private CPerformance performance;
 
     @XmlElement(name = FIELD_AVERAGE)
+    @Column
     private int average;
 
     @XmlElement(name = FIELD_MIN)
+    @Column
     private int min;
 
     @XmlElement(name = FIELD_MAX)
+    @Column
     private int max;
 
     public CCardiacFrequency(){}
@@ -45,6 +52,10 @@ public class CCardiacFrequency {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getAverage() {
@@ -77,5 +88,15 @@ public class CCardiacFrequency {
 
     public void setPerformance(CPerformance performance) {
         this.performance = performance;
+    }
+
+    @Override
+    public String toString() {
+        return "CCardiacFrequency{" +
+                "id=" + id +
+                ", average=" + average +
+                ", min=" + min +
+                ", max=" + max +
+                '}';
     }
 }

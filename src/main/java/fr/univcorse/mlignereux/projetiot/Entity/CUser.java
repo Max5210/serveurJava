@@ -5,7 +5,6 @@ package fr.univcorse.mlignereux.projetiot.entity;
  */
 public class CUser {
 
-
     private String email;
 
     private String pwd;

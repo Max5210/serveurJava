@@ -24,4 +24,20 @@ public class CVideo {
     @OneToOne
     @XmlElement(name = FIELD_PERFORMANCE)
     private CPerformance performance;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public CPerformance getPerformance() {
+        return performance;
+    }
+
+    public void setPerformance(CPerformance performance) {
+        this.performance = performance;
+    }
 }

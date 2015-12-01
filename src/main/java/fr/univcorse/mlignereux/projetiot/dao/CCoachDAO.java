@@ -87,9 +87,4 @@ public class CCoachDAO  {
         return query.getResultList();
     }
 
-    public void addTraining(CCoach pCoach, CTraining pTraining){
-        find(CCoach.class, pCoach.getId()).getTrainings().add(pTraining);
-        em.persist(pTraining);
-    }
-
 }

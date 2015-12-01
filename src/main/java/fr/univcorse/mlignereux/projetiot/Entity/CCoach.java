@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 @Entity
 @XmlRootElement(name = "Coach")
 @Table(name = "COACHS")
+@JsonIgnoreProperties(value = { CCoach.FIELD_TRAININGS})
 public class CCoach extends CUser implements Serializable {
 
     public static final String FIELD_ID = "id";
@@ -44,10 +46,12 @@ public class CCoach extends CUser implements Serializable {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @XmlElement(name = FIELD_ATHLETES)
+    @Column
     private List<CAthlete> athletes = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "coach")
     @XmlElement(name = FIELD_TRAININGS)
+    @Column
     private List<CTraining> trainings = new ArrayList<>();
 
     public CCoach(){}
@@ -56,6 +60,8 @@ public class CCoach extends CUser implements Serializable {
         this.status = pStatus;
         this.email = pEmail;
         this.password = pPwd;
+        this.athletes = new ArrayList<>();
+        this.trainings = new ArrayList<>();
     }
 
     public int getId() {
@@ -119,8 +125,8 @@ public class CCoach extends CUser implements Serializable {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", status=" + status +
+                ", athletes=" + athletes +
+                ", trainings=" + trainings +
                 '}';
     }
-
-
 }
