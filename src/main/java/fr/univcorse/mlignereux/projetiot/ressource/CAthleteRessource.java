@@ -3,12 +3,8 @@ package fr.univcorse.mlignereux.projetiot.ressource;
 import fr.univcorse.mlignereux.projetiot.dao.CAthleteDAO;
 import fr.univcorse.mlignereux.projetiot.entity.CAthlete;
 import fr.univcorse.mlignereux.projetiot.entity.CPerformance;
-import fr.univcorse.mlignereux.projetiot.entity.CUser;
-import sun.rmi.runtime.Log;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -16,8 +12,6 @@ import javax.json.JsonArrayBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -25,8 +19,6 @@ import java.util.List;
  */
 
 @Path("/athletes")
-@Stateless
-@LocalBean
 @Consumes("*/*")
 public class CAthleteRessource {
 
@@ -59,8 +51,8 @@ public class CAthleteRessource {
                     .build();
         }
 
-        if(athleteDAO.findByEmail(CAthlete.class, pEmail) != null){
-            return Response.status(Response.Status.FOUND)
+        if(athleteDAO.findByEmail(pEmail) != null){
+            return Response.status(Response.Status.CONFLICT)
                     .entity(EMAIL_ALREADY_USED)
                     .build();
         }
@@ -85,12 +77,12 @@ public class CAthleteRessource {
     }
 
 
-    @GET
+   /* @GET
     @Path("{id}")
     @Produces("application/json")
     public JsonArray getAthleteById(@PathParam("id") final int id){
         JsonArrayBuilder builder = Json.createArrayBuilder();
-        CAthlete athlete = athleteDAO.find(CAthlete.class, id);
+        CAthlete athlete = athleteDAO.find(id);
         if(athlete != null){
             builder.add(Json.createObjectBuilder()
                     .add("id", athlete.getId())
@@ -99,6 +91,14 @@ public class CAthleteRessource {
                     .add("status", athlete.getStatus().toString()));
         }
         return builder.build();
+    }*/
+
+    @GET
+    @Path("{id}")
+    @Produces("application/json")
+    public CAthlete getAthleteById(@PathParam("id") final int id){
+        return athleteDAO.find(id);
+
     }
 
     @GET
@@ -106,7 +106,7 @@ public class CAthleteRessource {
     @Produces("application/json")
     public JsonArray getAthleteByEmail(@PathParam("email") final String pEmail){
         JsonArrayBuilder builder = Json.createArrayBuilder();
-        CAthlete athlete = athleteDAO.findByEmail(CAthlete.class, pEmail);
+        CAthlete athlete = athleteDAO.findByEmail(pEmail);
         if(athlete != null){
             builder.add(Json.createObjectBuilder()
                     .add("id", athlete.getId())
@@ -134,7 +134,7 @@ public class CAthleteRessource {
                     .build();
         }
 
-        if(athleteDAO.findByEmail(CAthlete.class, pEmail) == null){
+        if(athleteDAO.findByEmail(pEmail) == null){
             return Response.status(Response.Status.NOT_FOUND)
                     .entity(NOT_FOUND)
                     .build();
@@ -155,11 +155,20 @@ public class CAthleteRessource {
 
 
     @GET
-    @Path("{id}/allPerformances")
+    @Path("/{id}/allPerformances")
     @Produces("application/json")
     public List<CPerformance> getAllPerformances(@PathParam("id") int pId){
-        CAthlete athlete = athleteDAO.find(CAthlete.class, pId);
+        CAthlete athlete = athleteDAO.find(pId);
         return athlete.getPerformances();
+    }
+
+    @GET
+    @Path("/{id}/performance/{id_perf}")
+    @Produces("application/json")
+    public CPerformance getPerformance(@PathParam("id") int pId,
+                                       @PathParam("id_perf") int pIdPerf){
+        CAthlete athlete = athleteDAO.find(pId);
+        return athlete.getPerformances().get(pIdPerf);
     }
 
 

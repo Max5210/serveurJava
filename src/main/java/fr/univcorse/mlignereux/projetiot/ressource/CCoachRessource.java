@@ -5,8 +5,6 @@ import fr.univcorse.mlignereux.projetiot.dao.CCoachDAO;
 import fr.univcorse.mlignereux.projetiot.dao.CTrainingDAO;
 import fr.univcorse.mlignereux.projetiot.entity.CAthlete;
 import fr.univcorse.mlignereux.projetiot.entity.CCoach;
-import fr.univcorse.mlignereux.projetiot.entity.CTraining;
-import fr.univcorse.mlignereux.projetiot.entity.CUser;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -15,7 +13,6 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -27,8 +24,6 @@ import java.util.List;
  */
 
 @Path("/coachs")
-@Stateless
-@LocalBean
 @Consumes("*/*")
 public class CCoachRessource {
 
@@ -67,8 +62,8 @@ public class CCoachRessource {
                     .build();
         }
 
-        if(coachDao.findByEmail(CCoach.class, pEmail) != null){
-            return Response.status(Response.Status.FOUND)
+        if(coachDao.findByEmail(pEmail) != null){
+            return Response.status(Response.Status.CONFLICT)
                     .entity(EMAIL_ALREADY_USED)
                     .build();
         }
@@ -102,7 +97,7 @@ public class CCoachRessource {
     @Produces("application/json")
     public Response getCoachById(@PathParam("id") final int id){
         JsonArrayBuilder builder = Json.createArrayBuilder();
-        CCoach coach =  coachDao.find(CCoach.class, id);
+        CCoach coach =  coachDao.find(id);
         if(coach != null){
             return Response.status(Response.Status.OK)
                     .header("Location",
@@ -119,7 +114,7 @@ public class CCoachRessource {
     @Produces("application/json")
     public JsonArray getCoachByEmail(@PathParam("email") final String pEmail){
         JsonArrayBuilder builder = Json.createArrayBuilder();
-        CCoach coach = coachDao.findByEmail(CCoach.class, pEmail);
+        CCoach coach = coachDao.findByEmail(pEmail);
         if(coach != null){
             builder.add(Json.createObjectBuilder()
                     .add("id", coach.getId())
@@ -146,7 +141,7 @@ public class CCoachRessource {
                     .build();
         }
 
-        if(coachDao.findByEmail(CCoach.class, pEmail) == null){
+        if(coachDao.findByEmail(pEmail) == null){
             return Response.status(Response.Status.NOT_FOUND)
                     .entity(NOT_FOUND)
                     .build();
@@ -172,9 +167,9 @@ public class CCoachRessource {
     @Produces("application/json")
     public Response addAthlete(@PathParam("id")int pId, @PathParam("email")String pEmail){
 
-        CCoach coach = coachDao.find(CCoach.class, pId);
+        CCoach coach = coachDao.find(pId);
 
-        CAthlete athlete = athleteDAO.findByEmail(CAthlete.class, pEmail);
+        CAthlete athlete = athleteDAO.findByEmail(pEmail);
         if(athlete == null){
             return Response.status(Response.Status.NOT_FOUND)
                     .entity(NOT_FOUND)
@@ -190,7 +185,7 @@ public class CCoachRessource {
     @Produces("application/json")
     public JsonArray getListAthletes(@PathParam("id") int pId){
         JsonArrayBuilder builder = Json.createArrayBuilder();
-        CCoach coach = coachDao.find(CCoach.class, pId);
+        CCoach coach = coachDao.find(pId);
         if(coach != null){
             for (int i = 0; i < coach.getAthletes().size(); i++) {
                 builder.add(Json.createObjectBuilder()

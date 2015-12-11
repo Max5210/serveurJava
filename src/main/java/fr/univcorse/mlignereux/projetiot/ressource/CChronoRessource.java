@@ -9,8 +9,6 @@ import javax.ws.rs.Path;
  * Created by asus on 20/10/2015.
  */
 @Path("/chrono")
-@Stateless
-@LocalBean
 @Consumes("*/*")
 public class CChronoRessource {
 

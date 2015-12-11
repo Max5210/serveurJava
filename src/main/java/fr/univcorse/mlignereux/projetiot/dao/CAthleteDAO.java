@@ -22,7 +22,7 @@ public class CAthleteDAO {
     private EntityManager em;
 
     public List<CAthlete> getAllAthletes(){
-        TypedQuery<CAthlete> query =  em.createQuery("select a from CAthlete a", CAthlete.class);
+        Query query =  em.createQuery("select a from CAthlete a");
         return query.getResultList();
     }
 
@@ -35,25 +35,23 @@ public class CAthleteDAO {
         return athlete;
     }
 
-    public CAthlete find(Class type, int id){
+    public CAthlete find(int id){
         CAthlete athlete = null;
-        TypedQuery<CAthlete> query =  em.createQuery("select a from CAthlete a where a.id = :athlete_id",
-                type);
+        Query query =  em.createQuery("select a from CAthlete a where a.id = :athlete_id");
         if(query != null){
             query.setParameter("athlete_id", id);
-            athlete = query.getSingleResult();
+            athlete = (CAthlete) query.getSingleResult();
         }
         return athlete;
     }
 
 
-    public CAthlete findByEmail(Class cAthleteClass, String email) {
+    public CAthlete findByEmail(String email) {
         CAthlete athlete = null;
         try{
-            TypedQuery<CAthlete> query = em.createQuery("select a from CAthlete a where a.email = :athlete_email",
-                    cAthleteClass);
+            Query query = em.createQuery("select a from CAthlete a where a.email = :athlete_email");
             query.setParameter("athlete_email", email);
-            athlete =  query.getSingleResult();
+            athlete = (CAthlete) query.getSingleResult();
         }catch(NoResultException exception){
 
         }
@@ -65,11 +63,10 @@ public class CAthleteDAO {
     public CAthlete getAthlete(String pEmail, String pPassword){
         CAthlete athlete = null;
         try{
-            TypedQuery<CAthlete> query =  em.createQuery("select a from CAthlete a where a.email = :athlete_email and a.password =:athlete_password",
-                    CAthlete.class);
+            Query query =  em.createQuery("select a from CAthlete a where a.email = :athlete_email and a.password =:athlete_password");
             query.setParameter("athlete_email", pEmail);
             query.setParameter("athlete_password", pPassword);
-            athlete = query.getSingleResult();
+            athlete = (CAthlete) query.getSingleResult();
         }catch (NoResultException exception){
 
         }

@@ -24,8 +24,6 @@ import java.util.List;
  */
 
 @Path("/trainings")
-@Stateless
-@LocalBean
 @Consumes("*/*")
 public class CTrainingRessource {
 
@@ -70,7 +68,7 @@ public class CTrainingRessource {
                                 @FormParam(CTraining.FIELD_HOUR) String pHour,
                                 @FormParam(CTraining.FIELD_DESCRIPTION) String pDescription){
 
-        CCoach coach = coachDAO.find(CCoach.class, pCoach);
+        CCoach coach = coachDAO.find(pCoach);
 
         CTraining training = trainingDAO.postTraining(coach,pDescription,pDate,pHour);
 
@@ -85,11 +83,11 @@ public class CTrainingRessource {
     }
 
     @PUT
-    @Path("{id}/addAthletes/{id_athlete}")
+    @Path("/{id}/addAthletes/{id_athlete}")
     @Produces("application/json")
     public void addAthletes(@PathParam("id") int pId, @PathParam("id_athlete")int pAthleteId){
-        CTraining training = trainingDAO.find(CTraining.class,pId);
-        CAthlete athlete = athleteDAO.find(CAthlete.class, pAthleteId);
+        CTraining training = trainingDAO.find(pId);
+        CAthlete athlete = athleteDAO.find(pAthleteId);
 
 
         List<CAthlete> athleteList = training.getAthletes();
@@ -102,8 +100,7 @@ public class CTrainingRessource {
     @Path("/{id}")
     @Produces("application/json")
     public Response getTrainingById(@PathParam("id") final int id){
-        JsonArrayBuilder builder = Json.createArrayBuilder();
-        CTraining training =  trainingDAO.find(CTraining.class, id);
+        CTraining training =  trainingDAO.find(id);
         if(training != null){
             return Response.status(Response.Status.OK)
                     .header("Location",

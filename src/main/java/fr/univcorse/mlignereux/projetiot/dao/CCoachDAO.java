@@ -21,7 +21,7 @@ public class CCoachDAO  {
     private EntityManager em;
 
     public List<CCoach> getAllCoachs(){
-        TypedQuery<CCoach> query =  em.createQuery("select c from CCoach c", CCoach.class);
+        Query query =  em.createQuery("select c from CCoach c");
         return query.getResultList();
     }
 
@@ -36,20 +36,18 @@ public class CCoachDAO  {
         return coach;
     }
 
-    public CCoach find(Class type, int id){
-        TypedQuery<CCoach> query =  em.createQuery("select a from CCoach a where a.id = :coach_id",
-                type);
+    public CCoach find(int id){
+        Query query =  em.createQuery("select a from CCoach a where a.id = :coach_id");
         query.setParameter("coach_id", id);
-        return query.getSingleResult();
+        return (CCoach) query.getSingleResult();
     }
 
-    public CCoach findByEmail(Class cCoachClass, String email) {
+    public CCoach findByEmail(String email) {
         CCoach coach = null;
         try{
-            TypedQuery<CCoach> query =  em.createQuery("select a from CCoach a where a.email = :coach_email",
-                    cCoachClass);
+            Query query =  em.createQuery("select a from CCoach a where a.email = :coach_email");
             query.setParameter("coach_email", email);
-            coach = query.getSingleResult();
+            coach = (CCoach) query.getSingleResult();
         }catch (NoResultException e){
 
         }
@@ -59,11 +57,10 @@ public class CCoachDAO  {
     public CCoach getCoach(String pEmail, String pPassword){
         CCoach coach = null;
         try{
-            TypedQuery<CCoach> query =  em.createQuery("select a from CCoach a where a.email = :coach_email and a.password =:coach_password",
-                    CCoach.class);
+            Query query =  em.createQuery("select a from CCoach a where a.email = :coach_email and a.password =:coach_password");
             query.setParameter("coach_email", pEmail);
             query.setParameter("coach_password", pPassword);
-            coach = query.getSingleResult();
+            coach = (CCoach) query.getSingleResult();
         }catch (NoResultException exception){
 
         }
@@ -71,7 +68,7 @@ public class CCoachDAO  {
     }
 
     public void addAthlete(CCoach pCoach, CAthlete pAthlete){
-        find(CCoach.class, pCoach.getId()).getAthletes().add(pAthlete);
+        find(pCoach.getId()).getAthletes().add(pAthlete);
         em.persist(pAthlete);
     }
 

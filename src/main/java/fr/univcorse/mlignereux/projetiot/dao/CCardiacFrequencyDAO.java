@@ -8,6 +8,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -35,16 +36,14 @@ public class CCardiacFrequencyDAO  {
     }
 
     public List<CCardiacFrequency> getAllCardiacFrequency(){
-        TypedQuery<CCardiacFrequency> query =  em.createQuery("select c from CCardiacFrequency c", CCardiacFrequency.class);
+        Query query =  em.createQuery("select c from CCardiacFrequency c");
         return query.getResultList();
     }
 
-    public CCardiacFrequency find(Class<CCardiacFrequency> cardiacFrequencyClass, int pId) {
-        TypedQuery<CCardiacFrequency> query = em.createQuery("select p from CCardiacFrequency p where p.id = :cardiacfrequency_id", cardiacFrequencyClass);
-        //TypedQuery<CPerformance> query = em.createQuery("select p from CPerformance p where p.id = :performance_id and p.athlete = :athlete", cPerformanceClass);
+    public CCardiacFrequency find(int pId) {
+        Query query = em.createQuery("select p from CCardiacFrequency p where p.id = :cardiacfrequency_id");
         query.setParameter("cardiacfrequency_id", pId);
-        //query.setParameter("athlete", athlete);
-        return query.getSingleResult();
+        return (CCardiacFrequency) query.getSingleResult();
     }
 
 

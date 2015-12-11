@@ -3,7 +3,6 @@ package fr.univcorse.mlignereux.projetiot.dao;
 import fr.univcorse.mlignereux.projetiot.entity.CAthlete;
 import fr.univcorse.mlignereux.projetiot.entity.CCoach;
 import fr.univcorse.mlignereux.projetiot.entity.CTraining;
-import org.omg.CORBA.CTX_RESTRICT_SCOPE;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -29,17 +28,16 @@ public class CTrainingDAO {
     }
 
     public CTraining getTraining(CTraining pTraining){
-        TypedQuery<CTraining> query = em.createQuery("select c from CTraining c where c.id = :training_id", CTraining.class);
+        Query query = em.createQuery("select c from CTraining c where c.id = :training_id");
         query.setParameter("training_id", pTraining.getId());
-        return query.getSingleResult();
+        return (CTraining) query.getSingleResult();
     }
 
 
-    public CTraining find(Class<CTraining> cTrainingClass, int pTrainingId) {
-        TypedQuery<CTraining> query =  em.createQuery("select a from CTraining a where a.id = :training_id",
-                cTrainingClass);
+    public CTraining find(int pTrainingId) {
+        Query query =  em.createQuery("select a from CTraining a where a.id = :training_id");
         query.setParameter("training_id", pTrainingId);
-        return query.getSingleResult();
+        return (CTraining) query.getSingleResult();
     }
 
     public CTraining postTraining(CCoach pCoach, String pDescription, String pDate, String pHour){

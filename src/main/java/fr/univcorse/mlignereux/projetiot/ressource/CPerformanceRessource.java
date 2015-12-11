@@ -16,8 +16,6 @@ import java.util.List;
  * Created by asus on 20/10/2015.
  */
 @Path("/performances")
-@Stateless
-@LocalBean
 @Consumes("*/*")
 public class CPerformanceRessource {
 
@@ -49,8 +47,8 @@ public class CPerformanceRessource {
     public void postPerformance(@FormParam("training_id") int pTrainingId,
                                 @FormParam("athlete_id") int pAthleteId){
 
-        CAthlete athlete = athleteDAO.find(CAthlete.class, pAthleteId);
-        CTraining training = trainingDAO.find(CTraining.class, pTrainingId);
+        CAthlete athlete = athleteDAO.find(pAthleteId);
+        CTraining training = trainingDAO.find(pTrainingId);
 
         performanceDAO.createPerformance(athlete,training);
 
@@ -71,24 +69,23 @@ public class CPerformanceRessource {
     public void addCardiacFrequency(@PathParam("id") int pPerformanceId,
                                 @PathParam("id_cf") int pCardiacFrequency){
 
-        CCardiacFrequency cardiacFrequency = cardiacFrequencyDAO.find(CCardiacFrequency.class, pCardiacFrequency);
-        CPerformance performance = performanceDAO.find(CPerformance.class, pPerformanceId);
+        CCardiacFrequency cardiacFrequency = cardiacFrequencyDAO.find(pCardiacFrequency);
+        CPerformance performance = performanceDAO.find(pPerformanceId);
 
         performanceDAO.addCardiacFrequency(performance,cardiacFrequency);
 
     }
 
-    //TODO finir implémenter addChrono
     @PUT
-    @Path("{id}/addCardiacFrequency/{id_chrono}")
+    @Path("{id}/addChrono/{id_chrono}")
     @Produces("application/json")
     public void addChrono(@PathParam("id") int pPerformanceId,
                                     @PathParam("id_chrono") int pChrono){
 
-        CCardiacFrequency cardiacFrequency = cardiacFrequencyDAO.find(CCardiacFrequency.class, pChrono);
-        CPerformance performance = performanceDAO.find(CPerformance.class, pPerformanceId);
+        CChrono chrono = chronoDAO.find(pChrono);
+        CPerformance performance = performanceDAO.find(pPerformanceId);
 
-        performanceDAO.addCardiacFrequency(performance,cardiacFrequency);
+        performanceDAO.addChrono(performance,chrono);
 
     }
 

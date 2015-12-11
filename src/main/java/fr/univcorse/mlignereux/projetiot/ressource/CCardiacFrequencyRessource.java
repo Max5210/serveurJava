@@ -20,8 +20,6 @@ import java.util.List;
  * Created by asus on 20/10/2015.
  */
 @Path("/cardiacfrequency")
-@Stateless
-@LocalBean
 @Consumes("*/*")
 public class CCardiacFrequencyRessource {
 
@@ -45,7 +43,7 @@ public class CCardiacFrequencyRessource {
                                      @FormParam(CCardiacFrequency.FIELD_MAX) int pMax,
                                      @FormParam(CCardiacFrequency.FIELD_MIN) int pMin){
 
-        CPerformance performance = performanceDAO.find(CPerformance.class, pPerformanceId);
+        CPerformance performance = performanceDAO.find(pPerformanceId);
         if(performance != null)
             cardiacFrequencyDAO.postCardiacFrequency(performance, pAverage,pMin,pMax);
 

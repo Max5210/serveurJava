@@ -6,6 +6,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
@@ -40,16 +41,21 @@ public class CPerformanceDAO{
         em.persist(performance);
     }
 
-    public CPerformance find(Class<CPerformance> cPerformanceClass, int pPerformanceId) {
-        TypedQuery<CPerformance> query = em.createQuery("select p from CPerformance p where p.id = :performance_id", cPerformanceClass);
+    public CPerformance find(int pPerformanceId) {
+        Query query = em.createQuery("select p from CPerformance p where p.id = :performance_id");
         //TypedQuery<CPerformance> query = em.createQuery("select p from CPerformance p where p.id = :performance_id and p.athlete = :athlete", cPerformanceClass);
         query.setParameter("performance_id", pPerformanceId);
         //query.setParameter("athlete", athlete);
-        return query.getSingleResult();
+        return (CPerformance) query.getSingleResult();
     }
 
     public void addCardiacFrequency(CPerformance performance, CCardiacFrequency cardiacFrequency){
-        find(CPerformance.class, performance.getId()).setCardiacFrequency(cardiacFrequency);
+        find(performance.getId()).setCardiacFrequency(cardiacFrequency);
         em.persist(cardiacFrequency);
+    }
+
+    public void addChrono(CPerformance performance, CChrono chrono) {
+        find(performance.getId()).setChrono(chrono);
+        em.persist(chrono);
     }
 }
